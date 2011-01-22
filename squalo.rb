@@ -95,14 +95,14 @@ class Application
     top_box.pack_start(np_box, true, true, 5)
 
     queue_scroll = Gtk::ScrolledWindow.new
-    queue_scroll.height_request = 200
-    queue_scroll.width_request = 400
+    #queue_scroll.height_request = 200
+    #queue_scroll.width_request = 400
     queue_scroll.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC)
     queue_scroll.add(queue_treeview)
 
     search_scroll = Gtk::ScrolledWindow.new
-    search_scroll.height_request = 200
-    search_scroll.width_request = 400
+    #search_scroll.height_request = 200
+    #search_scroll.width_request = 400
     search_scroll.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC)
     search_scroll.add(search_treeview)
 
