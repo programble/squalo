@@ -63,8 +63,6 @@ class Application
     search_treeview.enable_search = true
     search_treeview.search_column = 1
 
-    @search_entry = Gtk::Entry.new
-
     @search_button = Gtk::Button.new("Search")
     @search_button.image = Gtk::Image.new(Gtk::Stock::FIND, Gtk::IconSize::BUTTON)
     @search_button.signal_connect("clicked") do
@@ -82,6 +80,9 @@ class Application
         @search_thread = Thread.new { search }
       end
     end
+
+    @search_entry = Gtk::Entry.new
+    @search_entry.signal_connect("activate") { @search_button.clicked }
 
     np_box = Gtk::VBox.new
     np_box.pack_start(@song_label)
