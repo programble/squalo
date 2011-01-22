@@ -12,6 +12,15 @@ class Application
     @searching = false
     @search_thread = nil
     @pipeline = Gst::Pipeline.new
+    @playing = false
+    @pipeline.bus.add_watch do |bus, message|
+      if message.type == Gst::Message::EOS
+        @pipeline.stop
+        @playing = false
+        play_next_track
+      end
+      true
+    end
   end
 
   def initialize_ui
@@ -184,7 +193,7 @@ class Application
     iter[1] = song[1]
     iter[2] = song[2]
     iter[3] = song[3]
-    play_next_track
+    play_next_track unless @playing
   end
 
   def play_next_track
@@ -204,6 +213,7 @@ class Application
     source >> decoder >> sink
     # Not sure why @pipeline.play won't async itself
     Thread.new { @pipeline.play }
+    @playing = true
     @queue_model.remove(track)
   end
 
@@ -213,5 +223,6 @@ class Application
   end
 end
 
+Gst.init
 app = Application.new
 app.run
