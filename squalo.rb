@@ -29,7 +29,9 @@ class Application
     @skip_button.sensitive = false
 
     @song_label = Gtk::Label.new
+    @song_label.ellipsize = Pango::ELLIPSIZE_END
     @artist_label = Gtk::Label.new
+    @artist_label.ellipsize = Pango::ELLIPSIZE_END
 
     # URL, Name, Artist, Album
     @queue_model = Gtk::ListStore.new(String, String, String, String)
