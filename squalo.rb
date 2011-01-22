@@ -155,21 +155,6 @@ class Application
     @searching = false
   end
 
-  def test
-    @song_label.set_markup("<b>Still Alive</b>")
-    @artist_label.set_markup("Jonathan Coulton, Ellen McLain")
-    iter = @queue_model.append
-    iter.set_value(1, "American Pie")
-    iter.set_value(2, "Don McLean")
-    iter.set_value(3, "American Pie")
-    (1..20).each do |i|
-      iter = @queue_model.append
-      iter.set_value(1, i.to_s)
-      iter.set_value(2, i.to_s)
-      iter.set_value(3, i.to_s)
-    end
-  end
-
   def run
     @window.show_all
     Gtk.main
@@ -177,5 +162,4 @@ class Application
 end
 
 app = Application.new
-app.test
 app.run
