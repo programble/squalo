@@ -62,6 +62,7 @@ class Application
     search_treeview.headers_visible = true
     search_treeview.enable_search = true
     search_treeview.search_column = 1
+    search_treeview.signal_connect("row-activated") {|treeview, path, column| add_to_queue(path) }
 
     @search_button = Gtk::Button.new("Search")
     @search_button.image = Gtk::Image.new(Gtk::Stock::FIND, Gtk::IconSize::BUTTON)
@@ -144,15 +145,24 @@ class Application
     songs = @grooveshark.search_songs(@search_entry.text)
     songs.each do |song|
       iter = @search_model.append
-      iter.set_value(0, song.id)
-      iter.set_value(1, song.name)
-      iter.set_value(2, song.artist)
-      iter.set_value(3, song.album)
+      iter[0] = song.id
+      iter[1] = song.name
+      iter[2] = song.artist
+      iter[3] = song.album
     end
     @search_button.label = "Search"
     @search_button.image = Gtk::Image.new(Gtk::Stock::FIND, Gtk::IconSize::BUTTON)
     @search_entry.sensitive = true
     @searching = false
+  end
+
+  def add_to_queue(path)
+    song = @search_model.get_iter(path)
+    iter = @queue_model.append
+    iter[0] = song[0]
+    iter[1] = song[1]
+    iter[2] = song[2]
+    iter[3] = song[3]
   end
 
   def run
