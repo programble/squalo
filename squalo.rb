@@ -127,7 +127,7 @@ class Application
     @search_entry.sensitive = false
     @search_model.clear
     songs = @grooveshark.search_songs(@search_entry.text)
-    songs.each do |song|
+    songs.take(20).each do |song|
       iter = @search_model.append
       iter.set_value(0, @grooveshark.get_song_url(song))
       iter.set_value(1, song.name)
