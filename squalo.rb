@@ -36,6 +36,11 @@ class Application
 
     @skip_button = Gtk::ToolButton.new(Gtk::Stock::MEDIA_NEXT)
     @skip_button.sensitive = false
+    @skip_button.signal_connect("clicked") do
+      @pipeline.stop
+      @playing = false
+      play_next_track
+    end
 
     @song_label = Gtk::Label.new
     @song_label.ellipsize = Pango::ELLIPSIZE_END
@@ -193,13 +198,19 @@ class Application
     iter[1] = song[1]
     iter[2] = song[2]
     iter[3] = song[3]
+    @skip_button.sensitive = true
     play_next_track unless @playing
   end
 
   def play_next_track
     track = @queue_model.iter_first
-    return unless track
-    # TODO: Set now playing labels and buttons
+    if !track
+      @song_label.label = ""
+      @artist_label.label = ""
+      @pause_button.sensitive = false
+      @skip_button.sensitive = false
+      return
+    end
     @song_label.label = track[1]
     @artist_label.label = track[2]
     url = @grooveshark.get_song_url_by_id(track[0])
@@ -214,7 +225,11 @@ class Application
     # Not sure why @pipeline.play won't async itself
     Thread.new { @pipeline.play }
     @playing = true
+    @pause_button.sensitive = true
     @queue_model.remove(track)
+    if !@queue_model.iter_first
+      @skip_button.sensitive = false
+    end
   end
 
   def run
