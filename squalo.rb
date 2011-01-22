@@ -35,10 +35,18 @@ class Application
     name_column = Gtk::TreeViewColumn.new("Name", Gtk::CellRendererText.new, {:text => 1})
     name_column.resizable = true
     name_column.expand = true
+    name_column.sizing = Gtk::TreeViewColumn::FIXED
+    
     artist_column = Gtk::TreeViewColumn.new("Artist", Gtk::CellRendererText.new, {:text => 2})
     artist_column.resizable = true
+    artist_column.sizing = Gtk::TreeViewColumn::FIXED
+    artist_column.min_width = 100
+    
     album_column = Gtk::TreeViewColumn.new("Album", Gtk::CellRendererText.new, {:text => 3})
     album_column.resizable = true
+    album_column.sizing = Gtk::TreeViewColumn::FIXED
+    album_column.min_width = 100
+    
     queue_treeview = Gtk::TreeView.new(@queue_model)
     queue_treeview.append_column(name_column)
     queue_treeview.append_column(artist_column)
@@ -48,13 +56,22 @@ class Application
     queue_treeview.search_column = 1
 
     @search_model = Gtk::ListStore.new(String, String, String, String)
+    
     name_column = Gtk::TreeViewColumn.new("Name", Gtk::CellRendererText.new, {:text => 1})
     name_column.resizable = true
     name_column.expand = true
+    name_column.sizing = Gtk::TreeViewColumn::FIXED
+    
     artist_column = Gtk::TreeViewColumn.new("Artist", Gtk::CellRendererText.new, {:text => 2})
     artist_column.resizable = true
+    artist_column.sizing = Gtk::TreeViewColumn::FIXED
+    artist_column.min_width = 100
+    
     album_column = Gtk::TreeViewColumn.new("Album", Gtk::CellRendererText.new, {:text => 3})
     album_column.resizable = true
+    album_column.sizing = Gtk::TreeViewColumn::FIXED
+    album_column.min_width = 100
+    
     search_treeview = Gtk::TreeView.new(@search_model)
     search_treeview.append_column(name_column)
     search_treeview.append_column(artist_column)
