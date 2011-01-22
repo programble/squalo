@@ -3,6 +3,7 @@
 require 'rubygems'
 require 'gtk2'
 require 'grooveshark'
+require 'gst'
 
 class Application
   def initialize
@@ -10,6 +11,7 @@ class Application
     @grooveshark = Grooveshark::Client.new
     @searching = false
     @search_thread = nil
+    @pipeline = Gst::Pipeline.new
   end
 
   def initialize_ui
@@ -180,6 +182,24 @@ class Application
     iter[1] = song[1]
     iter[2] = song[2]
     iter[3] = song[3]
+    play_next_track
+  end
+
+  def play_next_track
+    track = @queue_model.iter_first
+    return unless track
+    # TODO: Set now playing labels and buttons
+    url = @grooveshark.get_song_url_by_id(track[0])
+    source = Gst::ElementFactory.make("souphttpsrc")
+    source.location = url
+    decoder = Gst::ElementFactory.make("mad")
+    sink = Gst::ElementFactory.make("autoaudiosink")
+    @pipeline.stop
+    @pipeline.clear
+    @pipeline.add(source, decoder, sink)
+    source >> decoder >> sink
+    @pipeline.play
+    track.remove
   end
 
   def run
