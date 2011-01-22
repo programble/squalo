@@ -8,6 +8,8 @@ class Application
   def initialize
     initialize_ui
     @grooveshark = Grooveshark::Client.new
+    @searching = false
+    @search_thread = nil
   end
 
   def initialize_ui
@@ -65,7 +67,21 @@ class Application
 
     @search_button = Gtk::Button.new("Search")
     @search_button.image = Gtk::Image.new(Gtk::Stock::FIND, Gtk::IconSize::BUTTON)
-    @search_button.signal_connect("clicked") { Thread.new { search } }
+    @search_button.signal_connect("clicked") do
+      if @searching
+        @search_thread.kill
+        @search_button.label = "Search"
+        @search_button.image = Gtk::Image.new(Gtk::Stock::FIND, Gtk::IconSize::BUTTON)
+        @search_entry.sensitive = true
+        @searching = false
+      else
+        @search_button.label = "Cancel"
+        @search_button.image = Gtk::Image.new(Gtk::Stock::STOP, Gtk::IconSize::BUTTON)
+        @search_entry.sensitive = false
+        @searching = true
+        @search_thread = Thread.new { search }
+      end
+    end
 
     np_box = Gtk::VBox.new
     np_box.pack_start(@song_label)
@@ -123,19 +139,19 @@ class Application
   end
 
   def search
-    @search_button.sensitive = false
-    @search_entry.sensitive = false
     @search_model.clear
     songs = @grooveshark.search_songs(@search_entry.text)
-    songs.take(20).each do |song|
+    songs.each do |song|
       iter = @search_model.append
-      iter.set_value(0, @grooveshark.get_song_url(song))
+      iter.set_value(0, song.id)
       iter.set_value(1, song.name)
       iter.set_value(2, song.artist)
       iter.set_value(3, song.album)
     end
+    @search_button.label = "Search"
+    @search_button.image = Gtk::Image.new(Gtk::Stock::FIND, Gtk::IconSize::BUTTON)
     @search_entry.sensitive = true
-    @search_button.sensitive = true
+    @searching = false
   end
 
   def test
