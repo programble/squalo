@@ -189,6 +189,8 @@ class Application
     track = @queue_model.iter_first
     return unless track
     # TODO: Set now playing labels and buttons
+    @song_label.label = track[1]
+    @artist_label.label = track[2]
     url = @grooveshark.get_song_url_by_id(track[0])
     source = Gst::ElementFactory.make("souphttpsrc")
     source.location = url
@@ -198,8 +200,9 @@ class Application
     @pipeline.clear
     @pipeline.add(source, decoder, sink)
     source >> decoder >> sink
-    @pipeline.play
-    track.remove
+    # Not sure why @pipeline.play won't async itself
+    Thread.new { @pipeline.play }
+    @queue_model.remove(track)
   end
 
   def run
