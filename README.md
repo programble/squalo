@@ -11,7 +11,7 @@ Blah blah blah taz blah
  * Ruby
  * Gtk2
  * ruby-gtk2
- * Gstreamer (with bad plugins)
+ * Gstreamer (with ugly plugins)
  * ruby-gstreamer
  * "grooveshark" gem
 
