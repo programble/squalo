@@ -2,6 +2,17 @@
 
 A small GTK Grooveshark client in Ruby
 
+## Dependencies
+
+Blah blah blah taz blah
+
+ * Ruby 1.9
+ * Gtk2
+ * ruby-gtk2
+ * Gstreamer
+ * ruby-gstreamer
+ * "grooveshark" gem
+
 ## License
 
 Copyright (c) 2011, Curtis McEnroe <programble@gmail.com>
