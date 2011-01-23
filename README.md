@@ -11,7 +11,7 @@ Blah blah blah taz blah
  * Ruby
  * Gtk2
  * ruby-gtk2
- * Gstreamer (With stuffs for http streaming and mp3 playback I think)
+ * Gstreamer (with bad plugins)
  * ruby-gstreamer
  * "grooveshark" gem
 
