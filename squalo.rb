@@ -29,7 +29,7 @@ class Application
     @window = Gtk::Window.new("Squalo")
     @window.signal_connect("delete_event") { false }
     # TODO: Stop playback
-    @window.signal_connect("destroy") { Gtk.main_quit }
+    @window.signal_connect("destroy") { @pipeline.stop; Gtk.main_quit }
     @window.border_width = 2
     @window.set_default_size(400, 289)
 
