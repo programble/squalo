@@ -13,21 +13,110 @@ module Squalo
       @streamer = Streamer.new
       @queue = SongQueue.new
       initialize_gui
+      @streamer.on_eos { on_eos }
+
+      @searching = false
+      @search_thread = nil
+      @search_results = []
+    end
+
+    def play_song(song)
+      if song == nil
+        @now_playing_label.markup = ""
+        return
+      end
+      url = @grooveshark.get_song_url(song)
+      @streamer.stream(url)
+      @now_playing_label.markup = "<b>#{song.name.gsub('&', '&amp;')}</b>\n<small>by</small> #{song.artist.gsub('&', '&amp;')} <small>from</small> #{song.album.gsub('&', '&amp;')}"
+    end
+
+    def search
+      @searching = true
+      update_search_buttons
+      @search_results = @grooveshark.search_songs(@search_entry.text)
+      @search_store.clear
+      @search_results.each_with_index do |song, index|
+        iter = @search_store.append
+        iter[0] = index
+        iter[1] = song.name
+        iter[2] = song.artist
+        iter[3] = song.album
+      end
+      @searching = false
+      update_search_buttons
+    end
+
+    def on_eos
+      play_song(queue.next)
+      update_control_buttons
+    end
+
+    def update_control_buttons
+      @previous_button.sensitive = @queue.has_previous? && @streamer.playing?
+      @pause_button.sensitive = @streamer.playing?
+      @pause_button.stock_id = (@streamer.paused?) ? Gtk::Stock::MEDIA_PLAY : Gtk::Stock::MEDIA_PAUSE
+      @next_button.sensitive = @queue.has_next? && @streamer.playing?
+    end
+
+    def update_search_buttons
+      if @searching
+        @search_button.label = "Cancel"
+        @search_button.image = Gtk::Image.new(Gtk::Stock::STOP, Gtk::IconSize::BUTTON)
+        @search_entry.sensitive = false
+      else
+        @search_button.label = "Search"
+        @search_button.image = Gtk::Image.new(Gtk::Stock::FIND, Gtk::IconSize::BUTTON)
+        @search_entry.sensitive = true
+      end
+    end
+
+    def update_queue_store
+      @queue_store.clear
+      @queue.songs.each_with_index do |song, index|
+        iter = @queue_store.append
+        iter[0] = index
+        iter[1] = (index == @queue.current) ? "<b>#{song.name}</b>" : song.name
+        iter[2] = (index == @queue.current) ? "<b>#{song.artist}</b>" : song.artist
+        iter[3] = (index == @queue.current) ? "<b>#{song.album}</b>" : song.album
+      end
     end
 
     def previous_button_clicked
+      play_song(@queue.previous)
+      update_control_buttons
+      update_queue_store
     end
 
     def pause_button_clicked
+      (@streamer.paused?) ? @streamer.unpause : @streamer.pause
+      update_control_buttons
     end
 
     def next_button_clicked
+      play_song(@queue.next)
+      update_control_buttons
+      update_queue_store
     end
 
-    def search_row_activated
+    def search_row_activated(path)
+      row = @search_store.get_iter(path)
+      song = @search_results[row[0]]
+      @queue.enqueue(song)
+      if !@streamer.playing?
+        play_song(@queue.next)
+      end
+      update_control_buttons
+      update_queue_store
     end
 
     def search_button_clicked
+      if @searching
+        @search_thread.kill
+        @searching = false
+        update_search_buttons
+      else
+        Thread.new { search }
+      end
     end
 
     def initialize_gui

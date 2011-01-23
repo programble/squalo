@@ -17,7 +17,7 @@ module Squalo
     end
 
     def has_next?
-      @current != @songs.length - 1 && @songs.length > 0
+      @current == nil || (@current < @songs.length - 1 && @songs.length > 0)
     end
 
     def has_previous?
@@ -25,14 +25,15 @@ module Squalo
     end
 
     def next
-      if has_next?
+      if has_next? && @current == nil
+        puts "bob"
+        @current = 0
+        @songs[@current]
+      elsif has_next?
         @current += 1
         @songs[@current]
-      elsif @current == nil && @songs.length > 0
-        @current = 1
-        @songs[@current]
       else
-        @current = nil
+        nil
       end
     end
 
