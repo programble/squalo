@@ -156,11 +156,11 @@ class Application
     search_scroll.add(search_treeview)
 
     search_entry_box = Gtk::HBox.new
-    search_entry_box.pack_start(@search_entry)
-    search_entry_box.pack_start(@search_button, false)
+    search_entry_box.pack_start(@search_entry, true, true, 2)
+    search_entry_box.pack_start(@search_button, false, false, 2)
 
     search_box = Gtk::VBox.new
-    search_box.pack_start(search_entry_box, false)
+    search_box.pack_start(search_entry_box, false, false, 2)
     search_box.pack_start(search_scroll)
 
     #panes = Gtk::HPaned.new
