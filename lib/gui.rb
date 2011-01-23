@@ -15,6 +15,21 @@ module Squalo
       initialize_gui
     end
 
+    def previous_button_clicked
+    end
+
+    def pause_button_clicked
+    end
+
+    def next_button_clicked
+    end
+
+    def search_row_activated
+    end
+
+    def search_button_clicked
+    end
+
     def initialize_gui
       # The main window
       @window = Gtk::Window.new("Squalo")
