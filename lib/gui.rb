@@ -47,8 +47,9 @@ module Squalo
     end
 
     def on_eos
-      play_song(queue.next)
+      play_song(@queue.next)
       update_control_buttons
+      update_queue_store
     end
 
     def update_control_buttons

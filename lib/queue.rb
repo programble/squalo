@@ -26,7 +26,6 @@ module Squalo
 
     def next
       if has_next? && @current == nil
-        puts "bob"
         @current = 0
         @songs[@current]
       elsif has_next?
