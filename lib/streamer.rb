@@ -7,10 +7,7 @@ module Squalo
     def initialize
       @playing = false
       @paused = false
-      @pipeline = Gst::Pipeline.new
-      # TODO: Handle this not existing
-      @decoder = Gst::ElementFactory.make("mad")
-      @sink = Gst::ElementFactory.make("autoaudiosink")
+      @pipeline = Gst::ElementFactory.make("playbin2")
       @pipeline.bus.add_watch {|bus, message| watch(bus, message); true}
       @eos_callback = nil
     end
@@ -28,13 +25,8 @@ module Squalo
     end
     
     def stream(url)
-      source = Gst::ElementFactory.make("souphttpsrc")
-      source.location = url
-      
       @pipeline.stop
-      @pipeline.clear
-      @pipeline.add(source, @decoder, @sink)
-      source >> @decoder >> @sink
+      @pipeline.uri = url
       
       # Not even sure forking here is necessary
       Thread.new { @pipeline.play }
