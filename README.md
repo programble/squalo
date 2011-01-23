@@ -1,5 +1,7 @@
 # Squalo
 
+![](http://stillmaintained.com/programble/squalo.png)
+
 A small GTK Grooveshark client in Ruby
 
 ## Dependencies
