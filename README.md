@@ -8,10 +8,10 @@ A small GTK Grooveshark client in Ruby
 
 Blah blah blah taz blah
 
- * Ruby 1.9
+ * Ruby
  * Gtk2
  * ruby-gtk2
- * Gstreamer
+ * Gstreamer (With stuffs for http streaming and mp3 playback I think)
  * ruby-gstreamer
  * "grooveshark" gem
 
