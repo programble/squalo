@@ -97,12 +97,12 @@ class Application
     artist_column.resizable = true
     artist_column.sizing = Gtk::TreeViewColumn::FIXED
     artist_column.min_width = 100
-    
+        
     album_column = Gtk::TreeViewColumn.new("Album", Gtk::CellRendererText.new, {:text => 3})
     album_column.resizable = true
     album_column.sizing = Gtk::TreeViewColumn::FIXED
     album_column.min_width = 100
-    
+        
     search_treeview = Gtk::TreeView.new(@search_model)
     search_treeview.append_column(name_column)
     search_treeview.append_column(artist_column)
@@ -224,8 +224,8 @@ class Application
       @skip_button.sensitive = false
       return
     end
-    @song_label.label = track[1]
-    @artist_label.label = track[2]
+    @song_label.markup = "<b>#{track[1]}</b>"
+    @artist_label.markup = "<small>by</small> #{track[2]} <small>from</small> #{track[3]}"
     url = @grooveshark.get_song_url_by_id(track[0])
     source = Gst::ElementFactory.make("souphttpsrc")
     source.location = url
