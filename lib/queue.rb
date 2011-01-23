@@ -40,5 +40,3 @@ module Squalo
     end
   end
 end
-
-      
