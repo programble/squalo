@@ -76,9 +76,15 @@ module Squalo
       @queue.songs.each_with_index do |song, index|
         iter = @queue_store.append
         iter[0] = index
-        iter[1] = (index == @queue.current) ? "<b>#{song.name}</b>" : song.name
-        iter[2] = (index == @queue.current) ? "<b>#{song.artist}</b>" : song.artist
-        iter[3] = (index == @queue.current) ? "<b>#{song.album}</b>" : song.album
+        if index == @queue.current && @streamer.playing?
+          iter[1] = "<b>#{song.name.gsub('&', '&amp;')}</b>"
+          iter[2] = "<b>#{song.artist.gsub('&', '&amp;')}</b>"
+          iter[3] = "<b>#{song.album.gsub('&', '&amp;')}</b>"
+        else
+          iter[1] = song.name.gsub('&', '&amp;')
+          iter[2] = song.artist.gsub('&', '&amp;')
+          iter[3] = song.album.gsub('&', '&amp;')
+        end
       end
     end
 
