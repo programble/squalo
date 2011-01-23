@@ -12,7 +12,9 @@ class Application
     @searching = false
     @search_thread = nil
     @pipeline = Gst::Pipeline.new
+    # The pipeline should keep track of these but it's broken
     @playing = false
+    @paused = false
     @pipeline.bus.add_watch do |bus, message|
       if message.type == Gst::Message::EOS
         @pipeline.stop
@@ -33,6 +35,17 @@ class Application
     # TODO: Maybe we should not use ToolButton outside of Toolbar
     @pause_button = Gtk::ToolButton.new(Gtk::Stock::MEDIA_PLAY)
     @pause_button.sensitive = false
+    @pause_button.signal_connect("clicked") do
+      if @paused
+        @pipeline.play
+        @pause_button.stock_id = Gtk::Stock::MEDIA_PAUSE
+        @paused = false
+      else
+        @pipeline.pause
+        @pause_button.stock_id = Gtk::Stock::MEDIA_PLAY
+        @paused = true
+      end
+    end
 
     @skip_button = Gtk::ToolButton.new(Gtk::Stock::MEDIA_NEXT)
     @skip_button.sensitive = false
@@ -225,7 +238,9 @@ class Application
     # Not sure why @pipeline.play won't async itself
     Thread.new { @pipeline.play }
     @playing = true
+    @paused = false
     @pause_button.sensitive = true
+    @pause_button.stock_id = Gtk::Stock::MEDIA_PAUSE
     @queue_model.remove(track)
     if !@queue_model.iter_first
       @skip_button.sensitive = false
