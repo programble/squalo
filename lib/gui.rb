@@ -109,6 +109,13 @@ module Squalo
       update_queue_store
     end
 
+    def queue_row_activated(path)
+      row = @queue_store.get_iter(path)
+      play_song(@queue.skip_to(row[0]))
+      update_control_buttons
+      update_queue_store
+    end
+
     def search_button_clicked
       if @searching
         @search_thread.kill
@@ -176,6 +183,7 @@ module Squalo
       queue_treeview.headers_visible = true
       queue_treeview.enable_search = true
       queue_treeview.search_column = 1
+      queue_treeview.signal_connect("row-activated") {|treeview, path, column| queue_row_activated(path)}
 
       # Search ListStore                (index,  name,   artist, album)
       @search_store = Gtk::ListStore.new(Fixnum, String, String, String)
