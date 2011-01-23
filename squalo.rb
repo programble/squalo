@@ -31,6 +31,7 @@ class Application
     # TODO: Stop playback
     @window.signal_connect("destroy") { Gtk.main_quit }
     @window.border_width = 2
+    @window.set_default_size(400, 290)
 
     # TODO: Maybe we should not use ToolButton outside of Toolbar
     @pause_button = Gtk::ToolButton.new(Gtk::Stock::MEDIA_PLAY)
