@@ -181,6 +181,8 @@ class Application
 
     notebook.append_page(queue_scroll, queue_tab_label)
     notebook.append_page(search_box, search_tab_label)
+    notebook.show_all
+    notebook.page = 1
 
     vbox = Gtk::VBox.new
     vbox.pack_start(top_box, false)
