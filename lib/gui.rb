@@ -24,6 +24,7 @@ module Squalo
     def play_song(song)
       if song == nil
         @now_playing_label.markup = ""
+        @window.title = "Squalo"
         return
       end
       begin
@@ -34,6 +35,7 @@ module Squalo
       end
       @streamer.stream(url)
       @now_playing_label.markup = "<b>#{CGI.escapeHTML(song.name)}</b>\n<small>by</small> #{CGI.escapeHTML(song.artist)} <small>from</small> #{CGI.escapeHTML(song.album)}"
+      @window.title = "#{song.name} by #{song.artist} - Squalo"
     end
 
     def search
