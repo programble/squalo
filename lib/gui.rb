@@ -135,7 +135,7 @@ module Squalo
           iter[3] = CGI.escapeHTML(song.album)
         end
       end
-      songs_left = @queue.songs.length - @queue.current - 1
+      songs_left = (@queue.current) ? @queue.songs.length - @queue.current - 1 : 0
       @queue_tab_label.markup = (songs_left > 0) ? "Queue (#{songs_left})" : "Queue"
     end
 
@@ -182,6 +182,13 @@ module Squalo
       else
         Thread.new { search }
       end
+    end
+    
+    def queue_clear_button_clicked
+      @queue.clear
+      play_song(nil)
+      update_queue_store
+      update_control_buttons
     end
 
     def initialize_gui
@@ -246,6 +253,13 @@ module Squalo
       queue_treeview.enable_search = true
       queue_treeview.search_column = 1
       queue_treeview.signal_connect("row-activated") {|treeview, path, column| queue_row_activated(path)}
+      
+      # Queue action buttons
+      queue_clear_button = Gtk::Button.new
+      queue_clear_button.relief = Gtk::RELIEF_NONE
+      queue_clear_button.image = Gtk::Image.new(Gtk::Stock::CLEAR, Gtk::IconSize::SMALL_TOOLBAR)
+      #queue_clear_button.label = "Clear"
+      queue_clear_button.signal_connect("clicked") { queue_clear_button_clicked }
 
       # Search ListStore                (index,  name,   artist, album)
       @search_store = Gtk::ListStore.new(Fixnum, String, String, String)
@@ -311,6 +325,9 @@ module Squalo
       queue_scroll_window = Gtk::ScrolledWindow.new
       queue_scroll_window.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC)
       queue_scroll_window.add(queue_treeview)
+      
+      queue_actions_box = Gtk::HBox.new
+      queue_actions_box.pack_start(queue_clear_button, false)
 
       search_scroll_window = Gtk::ScrolledWindow.new
       search_scroll_window.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC)
@@ -324,6 +341,10 @@ module Squalo
       search_page_box.pack_start(search_entry_box, false, false, 2)
       search_page_box.pack_start(search_scroll_window)
 
+      queue_page_box = Gtk::VBox.new
+      queue_page_box.pack_start(queue_actions_box, false, false, 2)
+      queue_page_box.pack_start(queue_scroll_window)
+
       queue_tab_box = Gtk::HBox.new
       queue_tab_box.pack_start(queue_tab_image)
       queue_tab_box.pack_start(@queue_tab_label)
@@ -336,7 +357,7 @@ module Squalo
 
       notebook = Gtk::Notebook.new
       notebook.tab_pos = Gtk::POS_BOTTOM
-      notebook.append_page(queue_scroll_window, queue_tab_box)
+      notebook.append_page(queue_page_box, queue_tab_box)
       notebook.append_page(search_page_box, search_tab_box)
       notebook.show_all
       notebook.page = 1

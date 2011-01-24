@@ -10,6 +10,11 @@ module Squalo
     def enqueue(song)
       @songs << song
     end
+    
+    def clear
+      @songs = []
+      @current = nil
+    end
 
     def skip_to(i)
       @current = i
