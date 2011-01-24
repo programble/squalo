@@ -325,7 +325,7 @@ module Squalo
 
       # Notebook tab labels
       @queue_tab_label = Gtk::Label.new("Queue")
-      queue_tab_image = Gtk::Image.new("emblem-sound", Gtk::IconSize::SMALL_TOOLBAR)
+      queue_tab_image = Gtk::Image.new("sound", Gtk::IconSize::SMALL_TOOLBAR)
 
       search_tab_label = Gtk::Label.new("Search")
       search_tab_image = Gtk::Image.new(Gtk::Stock::FIND, Gtk::IconSize::SMALL_TOOLBAR)
