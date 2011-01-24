@@ -24,6 +24,7 @@ module Squalo
         @grooveshark = Grooveshark::Client.new
         @search_button.sensitive = true
         @search_entry.sensitive = true
+        @search_entry.grab_focus
       end
 
       @searching = false
