@@ -260,6 +260,7 @@ module Squalo
       dummy_column = Gtk::TreeViewColumn.new("")
       dummy_column.resizable = false
       dummy_column.sort_column_id = 0
+      dummy_column.sort_indicator = false
       
       search_treeview = Gtk::TreeView.new(@search_store)
       search_treeview.append_column(dummy_column)
