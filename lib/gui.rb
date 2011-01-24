@@ -18,7 +18,7 @@ module Squalo
       load_configuration
       @streamer = Streamer.new
       @streamer.on_eos { on_eos }
-      @queue = SongQueue.new
+      @queue = SongQueue.new(@configuration[:queue] || [])
       initialize_gui
       Thread.new do
         @grooveshark = Grooveshark::Client.new
@@ -26,6 +26,7 @@ module Squalo
         @search_entry.sensitive = true
         @search_entry.grab_focus
       end
+      Thread.new { update_queue_store }
 
       @searching = false
       @search_thread = nil
@@ -92,6 +93,7 @@ module Squalo
     def window_delete
       @configuration[:window_width] = @window.size[0]
       @configuration[:window_height] = @window.size[1]
+      @configuration[:queue] = @queue.songs
       false
     end
 
