@@ -98,7 +98,7 @@ module Squalo
     def update_control_buttons
       @previous_button.sensitive = @queue.has_previous? && @streamer.playing?
       @pause_button.sensitive = @streamer.playing?
-      @pause_button.stock_id = (@streamer.paused?) ? Gtk::Stock::MEDIA_PLAY : Gtk::Stock::MEDIA_PAUSE
+      @pause_button.image = Gtk::Image.new((@streamer.paused?) ? Gtk::Stock::MEDIA_PLAY : Gtk::Stock::MEDIA_PAUSE, Gtk::IconSize::LARGE_TOOLBAR)
       @next_button.sensitive = @queue.has_next? && @streamer.playing?
     end
 
@@ -188,15 +188,21 @@ module Squalo
       @window.signal_connect("destroy") { window_destroy }
 
       # Playback control buttons
-      @previous_button = Gtk::ToolButton.new(Gtk::Stock::MEDIA_PREVIOUS)
+      @previous_button = Gtk::Button.new
+      @previous_button.relief = Gtk::RELIEF_NONE
+      @previous_button.image = Gtk::Image.new(Gtk::Stock::MEDIA_PREVIOUS, Gtk::IconSize::LARGE_TOOLBAR)
       @previous_button.sensitive = false
       @previous_button.signal_connect("clicked") { previous_button_clicked }
 
-      @next_button = Gtk::ToolButton.new(Gtk::Stock::MEDIA_NEXT)
+      @next_button = Gtk::Button.new
+      @next_button.relief = Gtk::RELIEF_NONE
+      @next_button.image = Gtk::Image.new(Gtk::Stock::MEDIA_NEXT, Gtk::IconSize::LARGE_TOOLBAR)
       @next_button.sensitive = false
       @next_button.signal_connect("clicked") { next_button_clicked }
 
-      @pause_button = Gtk::ToolButton.new(Gtk::Stock::MEDIA_PLAY)
+      @pause_button = Gtk::Button.new
+      @pause_button.relief = Gtk::RELIEF_NONE
+      @pause_button.image = Gtk::Image.new(Gtk::Stock::MEDIA_PLAY, Gtk::IconSize::LARGE_TOOLBAR)
       @pause_button.sensitive = false
       @pause_button.signal_connect("clicked") { pause_button_clicked }
 
