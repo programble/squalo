@@ -18,7 +18,7 @@ module Squalo
       load_configuration
       @streamer = Streamer.new
       @streamer.on_eos { on_eos }
-      @queue = SongQueue.new(@configuration[:queue] || [])
+      @queue = @configuration[:queue] || SongQueue.new
       initialize_gui
       Thread.new do
         @grooveshark = Grooveshark::Client.new
@@ -26,7 +26,7 @@ module Squalo
         @search_entry.sensitive = true
         @search_entry.grab_focus
       end
-      Thread.new { update_queue_store }
+      Thread.new { update_queue_store; update_control_buttons }
 
       @searching = false
       @search_thread = nil
@@ -93,7 +93,7 @@ module Squalo
     def window_delete
       @configuration[:window_width] = @window.size[0]
       @configuration[:window_height] = @window.size[1]
-      @configuration[:queue] = @queue.songs
+      @configuration[:queue] = @queue
       false
     end
 
@@ -105,8 +105,15 @@ module Squalo
 
     def update_control_buttons
       @previous_button.sensitive = @queue.has_previous? && @streamer.playing?
-      @pause_button.sensitive = @streamer.playing?
-      @pause_button.image = Gtk::Image.new((@streamer.paused?) ? Gtk::Stock::MEDIA_PLAY : Gtk::Stock::MEDIA_PAUSE, Gtk::IconSize::LARGE_TOOLBAR)
+      if @streamer.playing?
+        @pause_button.sensitive = true
+        @pause_button.image = Gtk::Image.new((@streamer.paused?) ? Gtk::Stock::MEDIA_PLAY : Gtk::Stock::MEDIA_PAUSE, Gtk::IconSize::LARGE_TOOLBAR)
+      elsif @queue.current
+        @pause_button.sensitive = @queue.songs.length > 0
+        @pause_button.image = Gtk::Image.new(Gtk::Stock::MEDIA_PLAY, Gtk::IconSize::LARGE_TOOLBAR)
+      else
+        @pause_button.sensitive = false
+      end
       @next_button.sensitive = @queue.has_next? && @streamer.playing?
     end
 
@@ -148,8 +155,14 @@ module Squalo
     end
 
     def pause_button_clicked
-      (@streamer.paused?) ? @streamer.unpause : @streamer.pause
-      update_control_buttons
+      if @streamer.playing?
+        (@streamer.paused?) ? @streamer.unpause : @streamer.pause
+        update_control_buttons
+      else
+        play_song(@queue.songs[@queue.current])
+        update_control_buttons
+        update_queue_store
+      end
     end
 
     def next_button_clicked
