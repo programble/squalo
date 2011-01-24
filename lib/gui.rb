@@ -243,18 +243,26 @@ module Squalo
       name_column.resizable = true
       name_column.expand = true
       name_column.sizing = Gtk::TreeViewColumn::FIXED
+      name_column.sort_column_id = 1
       
       artist_column = Gtk::TreeViewColumn.new("Artist", Gtk::CellRendererText.new, {:text => 2})
       artist_column.resizable = true
       artist_column.sizing = Gtk::TreeViewColumn::FIXED
       artist_column.min_width = 100
+      artist_column.sort_column_id = 2
       
       album_column = Gtk::TreeViewColumn.new("Album", Gtk::CellRendererText.new, {:text => 3})
       album_column.resizable = true
       album_column.sizing = Gtk::TreeViewColumn::FIXED
       album_column.min_width = 100
+      album_column.sort_column_id = 3
+
+      dummy_column = Gtk::TreeViewColumn.new("")
+      dummy_column.resizable = false
+      dummy_column.sort_column_id = 0
       
       search_treeview = Gtk::TreeView.new(@search_store)
+      search_treeview.append_column(dummy_column)
       search_treeview.append_column(name_column)
       search_treeview.append_column(artist_column)
       search_treeview.append_column(album_column)
