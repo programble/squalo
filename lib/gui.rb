@@ -86,6 +86,7 @@ module Squalo
           iter[3] = song.album.gsub('&', '&amp;')
         end
       end
+      @queue_tab_label.markup = "Queue (#{@queue.songs.length})" unless @queue.songs.length == 0
     end
 
     def previous_button_clicked
