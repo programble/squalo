@@ -233,9 +233,7 @@ module Squalo
       queue_treeview.headers_visible = true
       queue_treeview.enable_search = true
       queue_treeview.search_column = 1
-      queue_treeview.reorderable = true
       queue_treeview.signal_connect("row-activated") {|treeview, path, column| queue_row_activated(path)}
-      @queue_store.signal_connect("rows-reordered") {|treview, path, iter, order| puts order.inspect; puts "FHJGRIUEW"}
 
       # Search ListStore                (index,  name,   artist, album)
       @search_store = Gtk::ListStore.new(Fixnum, String, String, String)
