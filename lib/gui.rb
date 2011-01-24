@@ -46,6 +46,7 @@ module Squalo
 
     def play_song(song)
       if song == nil
+        @streamer.stop
         @now_playing_label.markup = ""
         @window.title = "Squalo"
         return
