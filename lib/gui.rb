@@ -16,11 +16,15 @@ module Squalo
       @configuration_path = File.expand_path("~/.config/squalo/squalo.yaml")
       @configuration = {}
       load_configuration
-      @grooveshark = Grooveshark::Client.new
       @streamer = Streamer.new
+      @streamer.on_eos { on_eos }
       @queue = SongQueue.new
       initialize_gui
-      @streamer.on_eos { on_eos }
+      Thread.new do
+        @grooveshark = Grooveshark::Client.new
+        @search_button.sensitive = true
+        @search_entry.sensitive = true
+      end
 
       @searching = false
       @search_thread = nil
@@ -282,9 +286,11 @@ module Squalo
       # Search entry
       @search_button = Gtk::Button.new("Search")
       @search_button.image = Gtk::Image.new(Gtk::Stock::FIND, Gtk::IconSize::BUTTON)
+      @search_button.sensitive = false
       @search_button.signal_connect("clicked") { search_button_clicked }
 
       @search_entry = Gtk::Entry.new
+      @search_entry.sensitive = false
       @search_entry.signal_connect("activate") { @search_button.clicked }
 
       # Notebook tab labels
