@@ -5,6 +5,7 @@ require 'queue'
 require 'rubygems'
 require 'gtk2'
 require 'grooveshark'
+require 'cgi'
 
 module Squalo
   class Gui
@@ -25,9 +26,14 @@ module Squalo
         @now_playing_label.markup = ""
         return
       end
-      url = @grooveshark.get_song_url(song)
+      begin
+        url = @grooveshark.get_song_url(song)
+      rescue NoMethodError
+        @grooveshark = Grooveshark::Client.new
+        retry
+      end
       @streamer.stream(url)
-      @now_playing_label.markup = "<b>#{song.name.gsub('&', '&amp;')}</b>\n<small>by</small> #{song.artist.gsub('&', '&amp;')} <small>from</small> #{song.album.gsub('&', '&amp;')}"
+      @now_playing_label.markup = "<b>#{CGI.escapeHTML(song.name)}</b>\n<small>by</small> #{CGI.escapeHTML(song.artist)} <small>from</small> #{CGI.escapeHTML(song.album)}"
     end
 
     def search
@@ -77,13 +83,13 @@ module Squalo
         iter = @queue_store.append
         iter[0] = index
         if index == @queue.current && @streamer.playing?
-          iter[1] = "<b>#{song.name.gsub('&', '&amp;')}</b>"
-          iter[2] = "<b>#{song.artist.gsub('&', '&amp;')}</b>"
-          iter[3] = "<b>#{song.album.gsub('&', '&amp;')}</b>"
+          iter[1] = "<b>#{CGI.escapeHTML(song.name)}</b>"
+          iter[2] = "<b>#{CGI.escapeHTML(song.artist)}</b>"
+          iter[3] = "<b>#{CGI.escapeHTML(song.album)}</b>"
         else
-          iter[1] = song.name.gsub('&', '&amp;')
-          iter[2] = song.artist.gsub('&', '&amp;')
-          iter[3] = song.album.gsub('&', '&amp;')
+          iter[1] = CGI.escapeHTML(song.name)
+          iter[2] = CGI.escapeHTML(song.artist)
+          iter[3] = CGI.escapeHTML(song.album)
         end
       end
       songs_left = @queue.songs.length - @queue.current - 1
