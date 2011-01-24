@@ -6,10 +6,16 @@ require 'rubygems'
 require 'gtk2'
 require 'grooveshark'
 require 'cgi'
+require 'yaml'
+require 'fileutils'
 
 module Squalo
   class Gui
     def initialize
+      # TODO: Stop hard-coding this
+      @configuration_path = File.expand_path("~/.config/squalo/squalo.yaml")
+      @configuration = {}
+      load_configuration
       @grooveshark = Grooveshark::Client.new
       @streamer = Streamer.new
       @queue = SongQueue.new
@@ -19,6 +25,23 @@ module Squalo
       @searching = false
       @search_thread = nil
       @search_results = []
+    end
+
+    def load_configuration
+      if File.exists? @configuration_path
+        File.open(@configuration_path, "r") do |f|
+          @configuration = YAML.load(f)
+        end
+      end
+    end
+
+    def save_configuration
+      if !File.exists? @configuration_path
+        FileUtils.mkdir_p(File.dirname(@configuration_path))
+      end
+      File.open(@configuration_path, "w") do |f|
+        YAML.dump(@configuration, f)
+      end
     end
 
     def play_song(song)
@@ -58,6 +81,18 @@ module Squalo
       play_song(@queue.next)
       update_control_buttons
       update_queue_store
+    end
+
+    def window_delete
+      @configuration[:window_width] = @window.size[0]
+      @configuration[:window_height] = @window.size[1]
+      false
+    end
+
+    def window_destroy
+      @streamer.stop
+      save_configuration
+      Gtk.main_quit
     end
 
     def update_control_buttons
@@ -147,13 +182,10 @@ module Squalo
       # The main window
       @window = Gtk::Window.new("Squalo")
       @window.border_width = 2
-      @window.set_default_size(400, 289)
+      @window.set_default_size(@configuration[:window_width] || 400, @configuration[:window_height] || 289)
 
-      @window.signal_connect("delete_event") { false }
-      @window.signal_connect("destroy") do
-        @streamer.stop
-        Gtk.main_quit
-      end
+      @window.signal_connect("delete_event") { window_delete }
+      @window.signal_connect("destroy") { window_destroy }
 
       # Playback control buttons
       @previous_button = Gtk::ToolButton.new(Gtk::Stock::MEDIA_PREVIOUS)
@@ -201,7 +233,9 @@ module Squalo
       queue_treeview.headers_visible = true
       queue_treeview.enable_search = true
       queue_treeview.search_column = 1
+      queue_treeview.reorderable = true
       queue_treeview.signal_connect("row-activated") {|treeview, path, column| queue_row_activated(path)}
+      @queue_store.signal_connect("rows-reordered") {|treview, path, iter, order| puts order.inspect; puts "FHJGRIUEW"}
 
       # Search ListStore                (index,  name,   artist, album)
       @search_store = Gtk::ListStore.new(Fixnum, String, String, String)
