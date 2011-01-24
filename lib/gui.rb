@@ -162,7 +162,7 @@ module Squalo
       # Now playing information
       @now_playing_label = Gtk::Label.new
       @now_playing_label.ellipsize = Pango::ELLIPSIZE_END
-      @now_playing_label.set_alignment(0, 0)
+      @now_playing_label.xalign = 0
 
       # Queue ListStore                (index,  name,   artist, album)
       @queue_store = Gtk::ListStore.new(Fixnum, String, String, String)
