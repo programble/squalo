@@ -195,7 +195,7 @@ module Squalo
         @searching = false
         update_search_buttons
       else
-        Thread.new { search }
+        @search_thread = Thread.new { search }
       end
     end
     
