@@ -205,6 +205,12 @@ module Squalo
       update_queue_store
       update_control_buttons
     end
+    
+    def queue_shuffle_button_clicked
+      @queue.shuffle!
+      update_queue_store
+      update_control_buttons
+    end
 
     def initialize_gui
       # The main window
@@ -275,6 +281,11 @@ module Squalo
       queue_clear_button.image = Gtk::Image.new(Gtk::Stock::CLEAR, Gtk::IconSize::SMALL_TOOLBAR)
       #queue_clear_button.label = "Clear"
       queue_clear_button.signal_connect("clicked") { queue_clear_button_clicked }
+      
+      queue_shuffle_button = Gtk::Button.new
+      queue_shuffle_button.relief = Gtk::RELIEF_NONE
+      queue_shuffle_button.image = Gtk::Image.new("media-playlist-shuffle", Gtk::IconSize::SMALL_TOOLBAR)
+      queue_shuffle_button.signal_connect("clicked") { queue_shuffle_button_clicked }
 
       # Search ListStore                (index,  name,   artist, album)
       @search_store = Gtk::ListStore.new(Fixnum, String, String, String)
@@ -343,6 +354,7 @@ module Squalo
       
       queue_actions_box = Gtk::HBox.new
       queue_actions_box.pack_start(queue_clear_button, false)
+      queue_actions_box.pack_start(queue_shuffle_button, false)
 
       search_scroll_window = Gtk::ScrolledWindow.new
       search_scroll_window.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC)

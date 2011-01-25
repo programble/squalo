@@ -1,6 +1,6 @@
 module Squalo
   class SongQueue
-    attr_reader :songs, :current
+    attr_reader :current, :songs
 
     def initialize(songs=[])
       @songs = songs
@@ -45,6 +45,15 @@ module Squalo
       if has_previous?
         @current -= 1
         @songs[@current]
+      end
+    end
+    
+    def shuffle!
+      if @songs.length > 1 && @current
+        current = @songs.slice!(@current)
+        @songs.shuffle!
+        @songs.unshift(current)
+        @current = 0
       end
     end
   end
