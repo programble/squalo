@@ -387,7 +387,7 @@ module Squalo
       notebook.append_page(queue_page_box, queue_tab_box)
       notebook.append_page(search_page_box, search_tab_box)
       notebook.show_all
-      notebook.page = 1
+      notebook.page = 1 if @queue.songs.none?
 
       box = Gtk::VBox.new
       box.pack_start(control_box, false)
