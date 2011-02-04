@@ -129,12 +129,14 @@ module Squalo
       end
     end
 
-    def update_queue_store
+    def update_queue_store(scroll_to_current=true)
       @queue_store.clear
+      current_path = nil
       @queue.songs.each_with_index do |song, index|
         iter = @queue_store.append
         iter[0] = index
         if index == @queue.current && @streamer.playing?
+          current_path = iter.path
           iter[1] = "<b>#{CGI.escapeHTML(song.name)}</b>"
           iter[2] = "<b>#{CGI.escapeHTML(song.artist)}</b>"
           iter[3] = "<b>#{CGI.escapeHTML(song.album)}</b>"
@@ -146,6 +148,7 @@ module Squalo
       end
       songs_left = (@queue.current) ? @queue.songs.length - @queue.current - 1 : 0
       @queue_tab_label.markup = (songs_left > 0) ? "Queue (#{songs_left})" : "Queue"
+      @queue_treeview.scroll_to_cell(current_path, nil, false, 0.0, 0.0) if current_path && scroll_to_current
     end
 
     def previous_button_clicked
@@ -186,7 +189,7 @@ module Squalo
       row = @queue_store.get_iter(path)
       play_song(@queue.skip_to(row[0]))
       update_control_buttons
-      update_queue_store
+      update_queue_store(false)
     end
 
     def search_button_clicked
@@ -266,14 +269,14 @@ module Squalo
       album_column.min_width = 100
 
       # Queue TreeView itself
-      queue_treeview = Gtk::TreeView.new(@queue_store)
-      queue_treeview.append_column(name_column)
-      queue_treeview.append_column(artist_column)
-      queue_treeview.append_column(album_column)
-      queue_treeview.headers_visible = true
-      queue_treeview.enable_search = true
-      queue_treeview.search_column = 1
-      queue_treeview.signal_connect("row-activated") {|treeview, path, column| queue_row_activated(path)}
+      @queue_treeview = Gtk::TreeView.new(@queue_store)
+      @queue_treeview.append_column(name_column)
+      @queue_treeview.append_column(artist_column)
+      @queue_treeview.append_column(album_column)
+      @queue_treeview.headers_visible = true
+      @queue_treeview.enable_search = true
+      @queue_treeview.search_column = 1
+      @queue_treeview.signal_connect("row-activated") {|treeview, path, column| queue_row_activated(path)}
       
       # Queue action buttons
       queue_clear_button = Gtk::Button.new
@@ -350,7 +353,7 @@ module Squalo
 
       queue_scroll_window = Gtk::ScrolledWindow.new
       queue_scroll_window.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC)
-      queue_scroll_window.add(queue_treeview)
+      queue_scroll_window.add(@queue_treeview)
       
       queue_actions_box = Gtk::HBox.new
       queue_actions_box.pack_start(queue_clear_button, false)
