@@ -15,6 +15,13 @@ module Squalo
       @songs = []
       @current = nil
     end
+    
+    def remove(song)
+      # TODO: Improve
+      current = @songs[@current]
+      @songs.delete_at(song)
+      @current = @songs.find_index(current)
+    end
 
     def skip_to(i)
       @current = i
