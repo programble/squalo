@@ -130,7 +130,9 @@ module Squalo
     end
     
     def update_queue_buttons
-      @queue_move_down_button.sensitive = @queue_move_up_button.sensitive = @queue_remove_button.sensitive = @queue_treeview.selection.selected ? true : false
+      @queue_move_down_button.sensitive = @queue_treeview.selection.selected && @queue_treeview.selection.selected[0] < @queue.songs.length - 1
+      @queue_move_up_button.sensitive = @queue_treeview.selection.selected && @queue_treeview.selection.selected[0] > 0
+      @queue_remove_button.sensitive = @queue_treeview.selection.selected ? true : false
     end
 
     def update_queue_store(scroll_to_current=true)
