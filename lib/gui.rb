@@ -232,15 +232,21 @@ module Squalo
     def queue_move_up_button_clicked
       row = @queue_treeview.selection.selected
       @queue.move_up(row[0])
+      path = row.path
       update_queue_store
       update_control_buttons
+      path.prev!
+      @queue_treeview.selection.select_path(path)
     end
     
     def queue_move_down_button_clicked
       row = @queue_treeview.selection.selected
       @queue.move_down(row[0])
+      path = row.path
       update_queue_store
       update_control_buttons
+      path.next!
+      @queue_treeview.selection.select_path(path)
     end
 
     def initialize_gui
