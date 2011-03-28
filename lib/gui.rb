@@ -412,8 +412,8 @@ module Squalo
       queue_actions_box.pack_start(@queue_move_up_button, false)
       queue_actions_box.pack_start(@queue_move_down_button, false)
       queue_actions_box.pack_start(@queue_remove_button, false)
-      queue_actions_box.pack_start(queue_clear_button, false)
-      queue_actions_box.pack_start(queue_shuffle_button, false)
+      queue_actions_box.pack_end(queue_clear_button, false)
+      queue_actions_box.pack_end(queue_shuffle_button, false)
 
       search_scroll_window = Gtk::ScrolledWindow.new
       search_scroll_window.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC)
