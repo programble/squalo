@@ -6,8 +6,6 @@ A small GTK Grooveshark client in Ruby
 
 ## Dependencies
 
-Blah blah blah taz blah
-
  * Ruby
  * Gtk2
  * ruby-gtk2
