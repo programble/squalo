@@ -22,6 +22,18 @@ module Squalo
       @songs.delete_at(song)
       @current = @songs.find_index(current)
     end
+    
+    def move_up(song)
+      current = @songs[@current]
+      @songs[song], @songs[song - 1] = @songs[song - 1], @songs[song]
+      @current = @songs.find_index(current)
+    end
+    
+    def move_down(song)
+      current = @songs[@current]
+      @songs[song], @songs[song + 1] = @songs[song + 1], @songs[song]
+      @current = @songs.find_index(current)
+    end
 
     def skip_to(i)
       @current = i

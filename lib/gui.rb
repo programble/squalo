@@ -130,7 +130,7 @@ module Squalo
     end
     
     def update_queue_buttons
-      @queue_remove_button.sensitive = @queue_treeview.selection.selected ? true : false
+      @queue_move_down_button.sensitive = @queue_move_up_button.sensitive = @queue_remove_button.sensitive = @queue_treeview.selection.selected ? true : false
     end
 
     def update_queue_store(scroll_to_current=true)
@@ -226,6 +226,20 @@ module Squalo
       update_queue_store
       update_control_buttons
     end
+    
+    def queue_move_up_button_clicked
+      row = @queue_treeview.selection.selected
+      @queue.move_up(row[0])
+      update_queue_store
+      update_control_buttons
+    end
+    
+    def queue_move_down_button_clicked
+      row = @queue_treeview.selection.selected
+      @queue.move_down(row[0])
+      update_queue_store
+      update_control_buttons
+    end
 
     def initialize_gui
       # The main window
@@ -292,6 +306,18 @@ module Squalo
       @queue_treeview.selection.signal_connect("changed") {|selection| update_queue_buttons}
       
       # Queue action buttons
+      @queue_move_up_button = Gtk::Button.new
+      @queue_move_up_button.relief = Gtk::RELIEF_NONE
+      @queue_move_up_button.image = Gtk::Image.new(Gtk::Stock::GO_UP, Gtk::IconSize::SMALL_TOOLBAR)
+      @queue_move_up_button.sensitive = false
+      @queue_move_up_button.signal_connect("clicked") { queue_move_up_button_clicked }
+      
+      @queue_move_down_button = Gtk::Button.new
+      @queue_move_down_button.relief = Gtk::RELIEF_NONE
+      @queue_move_down_button.image = Gtk::Image.new(Gtk::Stock::GO_DOWN, Gtk::IconSize::SMALL_TOOLBAR)
+      @queue_move_down_button.sensitive = false
+      @queue_move_down_button.signal_connect("clicked") { queue_move_down_button_clicked }
+      
       @queue_remove_button = Gtk::Button.new
       @queue_remove_button.relief = Gtk::RELIEF_NONE
       @queue_remove_button.image = Gtk::Image.new(Gtk::Stock::REMOVE, Gtk::IconSize::SMALL_TOOLBAR)
@@ -375,6 +401,8 @@ module Squalo
       queue_scroll_window.add(@queue_treeview)
       
       queue_actions_box = Gtk::HBox.new
+      queue_actions_box.pack_start(@queue_move_up_button, false)
+      queue_actions_box.pack_start(@queue_move_down_button, false)
       queue_actions_box.pack_start(@queue_remove_button, false)
       queue_actions_box.pack_start(queue_clear_button, false)
       queue_actions_box.pack_start(queue_shuffle_button, false)
